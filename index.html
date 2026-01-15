@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shader Playground</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F5F5F0;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      margin-bottom: 30px;
+      border-bottom: 8px solid #1a1a1a;
+      padding-bottom: 20px;
+    }
+    
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      color: #1a1a1a;
+    }
+    
+    h1 span {
+      color: #E63946;
+    }
+    
+    .subtitle {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-top: 12px;
+      color: #666;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 15px;
+      margin-bottom: 20px;
+      border-bottom: 4px solid #1a1a1a;
+      padding-bottom: 12px;
+    }
+    
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    
+    .section-header span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: #E63946;
+    }
+    
+    .canvas-container {
+      background: #1a1a1a;
+      padding: 15px;
+      position: relative;
+      margin-bottom: 25px;
+    }
+    
+    #shaderCanvas {
+      width: 100%;
+      height: 350px;
+      display: block;
+    }
+    
+    .playback-controls {
+      position: absolute;
+      bottom: 25px;
+      right: 25px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: none;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background: #E63946;
+      color: #F5F5F0;
+    }
+    
+    .btn-secondary {
+      background: #F5F5F0;
+      color: #1a1a1a;
+    }
+    
+    .btn-dark {
+      background: #1a1a1a;
+      color: #F5F5F0;
+    }
+    
+    .btn-dark:hover {
+      background: #E63946;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      color: #1a1a1a;
+      border: 3px solid #1a1a1a;
+    }
+    
+    .btn-outline.active {
+      background: #1a1a1a;
+      color: #F5F5F0;
+    }
+    
+    .two-column {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+    
+    .effects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+    
+    .effect-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: #1a1a1a;
+      color: #F5F5F0;
+      border: none;
+      padding: 14px 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    
+    .effect-btn.active {
+      background: #E63946;
+    }
+    
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+    
+    .palette-btn {
+      padding: 0;
+      border: 3px solid transparent;
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .palette-btn.active {
+      border-color: #1a1a1a;
+    }
+    
+    .palette-colors {
+      display: flex;
+      height: 32px;
+    }
+    
+    .palette-colors div {
+      flex: 1;
+    }
+    
+    .palette-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 5px 3px;
+      background: #1a1a1a;
+      color: #F5F5F0;
+      text-align: center;
+    }
+    
+    .custom-colors {
+      background: #1a1a1a;
+      padding: 15px;
+    }
+    
+    .custom-colors-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #F5F5F0;
+      margin-bottom: 12px;
+    }
+    
+    .color-pickers {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .color-picker-wrapper {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .color-picker-wrapper input {
+      width: 100%;
+      height: 45px;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .color-hex {
+      font-family: monospace;
+      font-size: 0.6rem;
+      color: #666;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+    
+    .params-section {
+      background: #FFD166;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    
+    .params-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    
+    .param-control {
+      margin-bottom: 5px;
+    }
+    
+    .param-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    
+    .param-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    
+    .param-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      background: #1a1a1a;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #E63946;
+      cursor: pointer;
+      border: none;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #E63946;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .fx-section {
+      background: #1a1a1a;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    
+    .fx-section .section-header {
+      border-bottom-color: #444;
+    }
+    
+    .fx-section .section-header h2 {
+      color: #F5F5F0;
+    }
+    
+    .fx-section .section-header span {
+      color: #FFD166;
+    }
+    
+    .fx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    
+    .fx-control .param-header {
+      margin-bottom: 8px;
+    }
+    
+    .fx-control .param-label {
+      color: #F5F5F0;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .fx-control .param-value {
+      color: #FFD166;
+    }
+    
+    .fx-control input[type="range"] {
+      background: #444;
+    }
+    
+    .fx-description {
+      font-size: 0.6rem;
+      color: #888;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .code-section {
+      margin-bottom: 25px;
+    }
+    
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 4px solid #1a1a1a;
+      padding-bottom: 12px;
+    }
+    
+    .code-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 15px;
+    }
+    
+    .code-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    
+    .code-header span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: #E63946;
+    }
+    
+    #codeEditor {
+      width: 100%;
+      height: 250px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: #1a1a1a;
+      color: #F5F5F0;
+      border: none;
+      padding: 15px;
+      resize: vertical;
+      line-height: 1.5;
+      display: none;
+    }
+    
+    #codeEditor:focus {
+      outline: 3px solid #E63946;
+    }
+    
+    #codeEditor.visible {
+      display: block;
+    }
+    
+    .error-display {
+      background: #E63946;
+      color: #F5F5F0;
+      padding: 12px 15px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      margin-top: 8px;
+      display: none;
+    }
+    
+    .error-display.visible {
+      display: block;
+    }
+    
+    .compile-btn {
+      margin-top: 12px;
+      display: none;
+    }
+    
+    .compile-btn.visible {
+      display: inline-block;
+    }
+    
+    .uniforms-section {
+      background: #1a1a1a;
+      color: #F5F5F0;
+      padding: 20px;
+    }
+    
+    .uniforms-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+    
+    .uniforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      font-family: monospace;
+      font-size: 0.7rem;
+    }
+    
+    .uniforms-grid span {
+      color: #E63946;
+    }
+    
+    .uniforms-grid .color-uniform {
+      color: #FFD166;
+    }
+    
+    .uniforms-grid .fx-uniform {
+      color: #06D6A0;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1a1a;
+      color: #F5F5F0;
+      padding: 15px 30px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Shader<span>Playground</span></h1>
+      <p class="subtitle">Create • Experiment • Visualize</p>
+    </header>
+
+    <!-- Preview -->
+    <section>
+      <div class="section-header">
+        <h2>Preview</h2>
+        <span>01</span>
+      </div>
+      <div class="canvas-container">
+        <canvas id="shaderCanvas"></canvas>
+        <div class="playback-controls">
+          <button id="playPauseBtn" class="btn btn-primary">Pause</button>
+          <button id="resetBtn" class="btn btn-secondary">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Effects & Palette -->
+    <div class="two-column">
+      <section>
+        <div class="section-header">
+          <h2>Effects</h2>
+          <span>02</span>
+        </div>
+        <div id="effectsGrid" class="effects-grid"></div>
+      </section>
+
+      <section>
+        <div class="section-header">
+          <h2>Palette</h2>
+          <span>03</span>
+        </div>
+        <div id="paletteGrid" class="palette-grid"></div>
+        <div class="custom-colors">
+          <div class="custom-colors-label">Custom Colors</div>
+          <div class="color-pickers">
+            <div class="color-picker-wrapper">
+              <input type="color" id="color1" value="#FF006E">
+              <div class="color-hex" id="color1Hex">#FF006E</div>
+            </div>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color2" value="#8338EC">
+              <div class="color-hex" id="color2Hex">#8338EC</div>
+            </div>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color3" value="#3A86FF">
+              <div class="color-hex" id="color3Hex">#3A86FF</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Parameters -->
+    <section class="params-section">
+      <div class="section-header">
+        <h2>Parameters</h2>
+        <span>04</span>
+      </div>
+      <div class="params-grid">
+        <div class="param-control">
+          <div class="param-header">
+            <label class="param-label">Intensity</label>
+            <span class="param-value" id="intensityValue">0.50</span>
+          </div>
+          <input type="range" id="intensity" min="0.1" max="1" step="0.01" value="0.5">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <label class="param-label">Speed</label>
+            <span class="param-value" id="speedValue">0.50</span>
+          </div>
+          <input type="range" id="speed" min="0.1" max="2" step="0.01" value="0.5">
+        </div>
+        <div class="param-control">
+          <div class="param-header">
+            <label class="param-label">Scale</label>
+            <span class="param-value" id="scaleValue">3.0</span>
+          </div>
+          <input type="range" id="scale" min="1" max="10" step="0.1" value="3">
+        </div>
+      </div>
+    </section>
+
+    <!-- FX Section -->
+    <section class="fx-section">
+      <div class="section-header">
+        <h2>Post Effects</h2>
+        <span>05</span>
+      </div>
+      <div class="fx-grid">
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Halftone</label>
+            <span class="param-value" id="halftoneValue">0.00</span>
+          </div>
+          <input type="range" id="halftone" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">Retro dot pattern overlay</div>
+        </div>
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Chromatic</label>
+            <span class="param-value" id="chromaticValue">0.00</span>
+          </div>
+          <input type="range" id="chromatic" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">RGB color separation</div>
+        </div>
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Vortex</label>
+            <span class="param-value" id="vortexValue">0.00</span>
+          </div>
+          <input type="range" id="vortex" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">Swirling distortion</div>
+        </div>
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Pixelate</label>
+            <span class="param-value" id="pixelateValue">0.00</span>
+          </div>
+          <input type="range" id="pixelate" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">Retro pixel mosaic</div>
+        </div>
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Glitch</label>
+            <span class="param-value" id="glitchValue">0.00</span>
+          </div>
+          <input type="range" id="glitch" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">Digital interference</div>
+        </div>
+        <div class="fx-control">
+          <div class="param-header">
+            <label class="param-label">Scanlines</label>
+            <span class="param-value" id="scanlinesValue">0.00</span>
+          </div>
+          <input type="range" id="scanlines" min="0" max="1" step="0.01" value="0">
+          <div class="fx-description">CRT monitor effect</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Editor -->
+    <section class="code-section">
+      <div class="code-header">
+        <div class="code-header-left">
+          <h2>GLSL Code</h2>
+          <span>06</span>
+        </div>
+        <button id="toggleCodeBtn" class="btn btn-outline">Show Editor</button>
+      </div>
+      <textarea id="codeEditor" spellcheck="false"></textarea>
+      <div id="errorDisplay" class="error-display"></div>
+      <button id="compileBtn" class="btn btn-dark compile-btn">Compile Shader</button>
+    </section>
+
+    <!-- Uniforms Reference -->
+    <section class="uniforms-section">
+      <h3>Available Uniforms</h3>
+      <div class="uniforms-grid">
+        <div><span>u_time</span> — seconds</div>
+        <div><span>u_resolution</span> — size</div>
+        <div><span>u_intensity</span> — strength</div>
+        <div><span>u_speed</span> — tempo</div>
+        <div><span>u_scale</span> — pattern</div>
+        <div><span class="color-uniform">u_color1</span> — rgb</div>
+        <div><span class="color-uniform">u_color2</span> — rgb</div>
+        <div><span class="color-uniform">u_color3</span> — rgb</div>
+        <div><span class="fx-uniform">u_halftone</span> — dots</div>
+        <div><span class="fx-uniform">u_chromatic</span> — aberr</div>
+        <div><span class="fx-uniform">u_vortex</span> — swirl</div>
+        <div><span class="fx-uniform">u_pixelate</span> — mosaic</div>
+        <div><span class="fx-uniform">u_glitch</span> — noise</div>
+        <div><span class="fx-uniform">u_scanlines</span> — crt</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // Color Palettes
+    const colorPalettes = {
+      neon: { name: "Neon", colors: ['#FF006E', '#8338EC', '#3A86FF'] },
+      sunset: { name: "Sunset", colors: ['#FF6B35', '#F7C59F', '#2E4057'] },
+      arctic: { name: "Arctic", colors: ['#00F5D4', '#00BBF9', '#9B5DE5'] },
+      fire: { name: "Fire", colors: ['#FFBE0B', '#FB5607', '#FF006E'] },
+      forest: { name: "Forest", colors: ['#06D6A0', '#118AB2', '#073B4C'] },
+      vapor: { name: "Vapor", colors: ['#F72585', '#7209B7', '#4CC9F0'] },
+      mono: { name: "Mono", colors: ['#FFFFFF', '#888888', '#000000'] },
+      candy: { name: "Candy", colors: ['#FF99C8', '#FCF6BD', '#A9DEF9'] }
+    };
+
+    // Shader template
+    const createShader = (baseLogic) => `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+uniform float u_intensity;
+uniform float u_speed;
+uniform float u_scale;
+uniform vec3 u_color1;
+uniform vec3 u_color2;
+uniform vec3 u_color3;
+uniform float u_halftone;
+uniform float u_chromatic;
+uniform float u_vortex;
+uniform float u_pixelate;
+uniform float u_glitch;
+uniform float u_scanlines;
+
+vec3 palette(float t) {
+  t = fract(t);
+  if (t < 0.5) {
+    return mix(u_color1, u_color2, t * 2.0);
+  } else {
+    return mix(u_color2, u_color3, (t - 0.5) * 2.0);
+  }
+}
+
+float random(vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+${baseLogic}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 originalUV = uv;
+  
+  // Pixelation
+  if (u_pixelate > 0.01) {
+    float pixels = mix(200.0, 20.0, u_pixelate);
+    uv = floor(uv * pixels) / pixels;
+  }
+  
+  // Vortex distortion
+  if (u_vortex > 0.01) {
+    vec2 center = vec2(0.5 + sin(u_time * u_speed * 0.5) * 0.2, 0.5 + cos(u_time * u_speed * 0.7) * 0.2);
+    vec2 delta = uv - center;
+    float dist = length(delta);
+    float angle = atan(delta.y, delta.x);
+    angle += u_vortex * exp(-dist * 3.0) * 5.0;
+    uv = center + vec2(cos(angle), sin(angle)) * dist;
+  }
+  
+  // Glitch
+  if (u_glitch > 0.01) {
+    float glitchLine = step(0.99 - u_glitch * 0.1, random(vec2(floor(u_time * 20.0), floor(uv.y * 20.0))));
+    uv.x += glitchLine * (random(vec2(u_time)) - 0.5) * u_glitch * 0.3;
+  }
+  
+  vec3 col = getColor(uv);
+  
+  // Chromatic aberration
+  if (u_chromatic > 0.01) {
+    vec2 center = vec2(0.5);
+    vec2 dir = normalize(uv - center);
+    float dist = length(uv - center);
+    float aberration = u_chromatic * 0.03 * dist;
+    
+    col.r = getColor(uv + dir * aberration).r;
+    col.b = getColor(uv - dir * aberration).b;
+  }
+  
+  // Halftone
+  if (u_halftone > 0.01) {
+    float dotSize = mix(8.0, 3.0, u_halftone);
+    vec2 cellPos = floor(gl_FragCoord.xy / dotSize);
+    vec2 cellCenter = (cellPos + 0.5) * dotSize;
+    float dist = distance(gl_FragCoord.xy, cellCenter);
+    float luminance = dot(col, vec3(0.299, 0.587, 0.114));
+    float radius = luminance * dotSize * 0.6;
+    float dot = smoothstep(radius + 1.0, radius - 1.0, dist);
+    col = mix(col, col * dot, u_halftone);
+  }
+  
+  // Scanlines
+  if (u_scanlines > 0.01) {
+    float scanline = sin(gl_FragCoord.y * 2.0) * 0.5 + 0.5;
+    col *= 1.0 - u_scanlines * 0.3 * scanline;
+    col *= 1.0 - u_scanlines * 0.1;
+  }
+  
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+    // Shader presets
+    const shaderPresets = {
+      plasma: {
+        name: "Plasma Wave",
+        code: createShader(`
+vec3 getColor(vec2 uv) {
+  vec2 p = uv * u_scale - u_scale * 0.5;
+  float t = u_time * u_speed;
+  float v = sin(p.x * 10.0 + t);
+  v += sin((p.y * 10.0 + t) * 0.5);
+  v += sin((p.x * 10.0 + p.y * 10.0 + t) * 0.5);
+  v += sin(length(p * 10.0) + t);
+  v *= u_intensity * 0.25;
+  return palette(v + t * 0.1);
+}`)
+      },
+      tunnel: {
+        name: "Infinite Tunnel",
+        code: createShader(`
+vec3 getColor(vec2 uv) {
+  vec2 centered = uv - 0.5;
+  float t = u_time * u_speed;
+  float angle = atan(centered.y, centered.x);
+  float radius = length(centered) * u_scale;
+  float tunnel = 1.0 / max(radius, 0.01);
+  float pattern = sin(tunnel * 5.0 - t * 3.0) * sin(angle * 8.0 + t);
+  pattern *= u_intensity;
+  vec3 col = palette(pattern * 0.5 + 0.5 + t * 0.1);
+  col *= smoothstep(0.0, 0.3, radius);
+  return col;
+}`)
+      },
+      kaleidoscope: {
+        name: "Kaleidoscope",
+        code: createShader(`
+#define PI 3.14159265359
+vec3 getColor(vec2 uv) {
+  vec2 centered = uv - 0.5;
+  float t = u_time * u_speed;
+  float angle = atan(centered.y, centered.x);
+  float radius = length(centered) * u_scale;
+  float segments = 8.0;
+  angle = mod(angle, PI * 2.0 / segments);
+  angle = abs(angle - PI / segments);
+  vec2 p = vec2(cos(angle), sin(angle)) * radius;
+  float pattern = 0.0;
+  pattern += sin(p.x * 20.0 + t * 2.0) * u_intensity;
+  pattern += sin(p.y * 20.0 - t * 1.5) * u_intensity;
+  pattern += sin((p.x + p.y) * 15.0 + t) * u_intensity;
+  return palette(pattern * 0.3 + t * 0.1);
+}`)
+      },
+      fractalNoise: {
+        name: "Fractal Flow",
+        code: createShader(`
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+float fbm(vec2 p) {
+  float v = 0.0, a = 0.5;
+  for(int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.0; a *= 0.5; }
+  return v;
+}
+vec3 getColor(vec2 uv) {
+  float t = u_time * u_speed;
+  vec2 p = uv * u_scale;
+  float n = fbm(p + fbm(p + fbm(p + t * 0.5)));
+  n *= u_intensity * 2.0;
+  return palette(n + t * 0.1);
+}`)
+      },
+      ripples: {
+        name: "Cosmic Ripples",
+        code: createShader(`
+vec3 getColor(vec2 uv) {
+  vec2 centered = uv - 0.5;
+  float t = u_time * u_speed;
+  float d = length(centered) * u_scale;
+  float wave = 0.0;
+  for(float i = 1.0; i < 6.0; i++) {
+    wave += sin(d * 20.0 / i - t * i * 0.5) / i;
+  }
+  wave *= u_intensity;
+  float angle = atan(centered.y, centered.x);
+  wave += sin(angle * 6.0 + t) * 0.3 * u_intensity;
+  vec3 col = palette(wave * 0.5 + 0.5 + t * 0.05);
+  col = mix(col, u_color1, smoothstep(0.4, 0.0, d / u_scale) * 0.5);
+  return col;
+}`)
+      },
+      warp: {
+        name: "Space Warp",
+        code: createShader(`
+vec3 getColor(vec2 uv) {
+  vec2 centered = uv - 0.5;
+  float t = u_time * u_speed;
+  float angle = atan(centered.y, centered.x);
+  float radius = length(centered);
+  angle += sin(radius * 10.0 * u_scale - t * 2.0) * u_intensity * 0.5;
+  radius += cos(angle * 5.0 + t) * 0.1 * u_intensity;
+  vec2 warped = vec2(cos(angle), sin(angle)) * radius;
+  float grid = 0.0;
+  grid += step(0.9, fract(warped.x * 10.0 + t));
+  grid += step(0.9, fract(warped.y * 10.0 + t));
+  vec3 bgCol = mix(u_color3, u_color2, radius);
+  return mix(bgCol, u_color1, grid);
+}`)
+      },
+      waves: {
+        name: "Ocean Waves",
+        code: createShader(`
+vec3 getColor(vec2 uv) {
+  float t = u_time * u_speed;
+  float wave = 0.0;
+  for(float i = 1.0; i < 8.0; i++) {
+    wave += sin(uv.x * 10.0 * i * u_scale + t * i * 0.5 + sin(uv.y * 5.0 * i + t)) / i;
+  }
+  wave *= u_intensity;
+  float y = uv.y + wave * 0.1;
+  return palette(y + t * 0.1);
+}`)
+      },
+      cells: {
+        name: "Living Cells",
+        code: createShader(`
+vec2 hash2(vec2 p) {
+  return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+}
+vec3 getColor(vec2 uv) {
+  float t = u_time * u_speed;
+  vec2 p = uv * u_scale * 3.0;
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  float minDist = 1.0;
+  vec2 minPoint;
+  for(int y = -1; y <= 1; y++) {
+    for(int x = -1; x <= 1; x++) {
+      vec2 neighbor = vec2(float(x), float(y));
+      vec2 point = hash2(i + neighbor);
+      point = 0.5 + 0.5 * sin(t + 6.2831 * point);
+      vec2 diff = neighbor + point - f;
+      float dist = length(diff);
+      if(dist < minDist) { minDist = dist; minPoint = point; }
+    }
+  }
+  float pattern = minDist * u_intensity * 2.0;
+  return palette(pattern + minPoint.x * 0.5 + t * 0.1);
+}`)
+      }
+    };
+
+    // Vertex shader
+    const vertexShaderSource = `
+      attribute vec2 a_position;
+      void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
+    `;
+
+    // State
+    let gl, program, canvas;
+    let isPlaying = true;
+    let startTime = Date.now();
+    let activePreset = 'plasma';
+    let activePalette = 'neon';
+    let animationId;
+
+    const params = {
+      intensity: 0.5,
+      speed: 0.5,
+      scale: 3.0,
+      halftone: 0,
+      chromatic: 0,
+      vortex: 0,
+      pixelate: 0,
+      glitch: 0,
+      scanlines: 0
+    };
+
+    const colors = {
+      color1: '#FF006E',
+      color2: '#8338EC',
+      color3: '#3A86FF'
+    };
+
+    // Utilities
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16) / 255,
+        g: parseInt(result[2], 16) / 255,
+        b: parseInt(result[3], 16) / 255
+      } : { r: 1, g: 1, b: 1 };
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2000);
+    }
+
+    function compileShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        const info = gl.getShaderInfoLog(shader);
+        gl.deleteShader(shader);
+        throw new Error(info);
+      }
+      return shader;
+    }
+
+    function createProgram(gl, fragmentSource) {
+      const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+      const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vertexShader);
+      gl.attachShader(prog, fragmentShader);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(prog));
+      }
+      return prog;
+    }
+
+    function initGL() {
+      canvas = document.getElementById('shaderCanvas');
+      gl = canvas.getContext('webgl');
+      if (!gl) {
+        alert('WebGL not supported');
+        return;
+      }
+
+      const positions = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+      updateShaderProgram(shaderPresets[activePreset].code);
+    }
+
+    function updateShaderProgram(code) {
+      try {
+        if (program) gl.deleteProgram(program);
+        program = createProgram(gl, code);
+        document.getElementById('errorDisplay').classList.remove('visible');
+        return true;
+      } catch (e) {
+        document.getElementById('errorDisplay').textContent = 'Error: ' + e.message;
+        document.getElementById('errorDisplay').classList.add('visible');
+        return false;
+      }
+    }
+
+    function render() {
+      if (!gl || !program) return;
+
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+
+      gl.useProgram(program);
+
+      const posLoc = gl.getAttribLocation(program, 'a_position');
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+      const time = (Date.now() - startTime) / 1000;
+
+      gl.uniform1f(gl.getUniformLocation(program, 'u_time'), time);
+      gl.uniform2f(gl.getUniformLocation(program, 'u_resolution'), canvas.width, canvas.height);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_intensity'), params.intensity);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_speed'), params.speed);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_scale'), params.scale);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_halftone'), params.halftone);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_chromatic'), params.chromatic);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_vortex'), params.vortex);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_pixelate'), params.pixelate);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_glitch'), params.glitch);
+      gl.uniform1f(gl.getUniformLocation(program, 'u_scanlines'), params.scanlines);
+
+      const c1 = hexToRgb(colors.color1);
+      const c2 = hexToRgb(colors.color2);
+      const c3 = hexToRgb(colors.color3);
+      gl.uniform3f(gl.getUniformLocation(program, 'u_color1'), c1.r, c1.g, c1.b);
+      gl.uniform3f(gl.getUniformLocation(program, 'u_color2'), c2.r, c2.g, c2.b);
+      gl.uniform3f(gl.getUniformLocation(program, 'u_color3'), c3.r, c3.g, c3.b);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      if (isPlaying) {
+        animationId = requestAnimationFrame(render);
+      }
+    }
+
+    // UI Setup
+    function setupEffectsGrid() {
+      const grid = document.getElementById('effectsGrid');
+      Object.entries(shaderPresets).forEach(([key, preset]) => {
+        const btn = document.createElement('button');
+        btn.className = 'effect-btn' + (key === activePreset ? ' active' : '');
+        btn.textContent = preset.name;
+        btn.onclick = () => selectPreset(key);
+        grid.appendChild(btn);
+      });
+    }
+
+    function setupPaletteGrid() {
+      const grid = document.getElementById('paletteGrid');
+      Object.entries(colorPalettes).forEach(([key, palette]) => {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn' + (key === activePalette ? ' active' : '');
+        btn.innerHTML = `
+          <div class="palette-colors">
+            ${palette.colors.map(c => `<div style="background:${c}"></div>`).join('')}
+          </div>
+          <div class="palette-label">${palette.name}</div>
+        `;
+        btn.onclick = () => selectPalette(key);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectPreset(key) {
+      activePreset = key;
+      document.querySelectorAll('.effect-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', Object.keys(shaderPresets)[i] === key);
+      });
+      const code = shaderPresets[key].code;
+      document.getElementById('codeEditor').value = code;
+      if (updateShaderProgram(code)) {
+        showToast('Effect: ' + shaderPresets[key].name);
+      }
+    }
+
+    function selectPalette(key) {
+      activePalette = key;
+      const palette = colorPalettes[key];
+      colors.color1 = palette.colors[0];
+      colors.color2 = palette.colors[1];
+      colors.color3 = palette.colors[2];
+
+      document.getElementById('color1').value = colors.color1;
+      document.getElementById('color2').value = colors.color2;
+      document.getElementById('color3').value = colors.color3;
+      document.getElementById('color1Hex').textContent = colors.color1;
+      document.getElementById('color2Hex').textContent = colors.color2;
+      document.getElementById('color3Hex').textContent = colors.color3;
+
+      document.querySelectorAll('.palette-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', Object.keys(colorPalettes)[i] === key);
+      });
+    }
+
+    function setupControls() {
+      // Play/Pause
+      document.getElementById('playPauseBtn').onclick = () => {
+        isPlaying = !isPlaying;
+        document.getElementById('playPauseBtn').textContent = isPlaying ? 'Pause' : 'Play';
+        document.getElementById('playPauseBtn').classList.toggle('btn-primary', isPlaying);
+        document.getElementById('playPauseBtn').classList.toggle('btn-secondary', !isPlaying);
+        if (isPlaying) render();
+      };
+
+      // Reset
+      document.getElementById('resetBtn').onclick = () => {
+        startTime = Date.now();
+      };
+
+      // Parameters
+      ['intensity', 'speed', 'scale'].forEach(param => {
+        const input = document.getElementById(param);
+        const display = document.getElementById(param + 'Value');
+        input.oninput = () => {
+          params[param] = parseFloat(input.value);
+          display.textContent = param === 'scale' ? params[param].toFixed(1) : params[param].toFixed(2);
+        };
+      });
+
+      // FX Parameters
+      ['halftone', 'chromatic', 'vortex', 'pixelate', 'glitch', 'scanlines'].forEach(param => {
+        const input = document.getElementById(param);
+        const display = document.getElementById(param + 'Value');
+        input.oninput = () => {
+          params[param] = parseFloat(input.value);
+          display.textContent = params[param].toFixed(2);
+        };
+      });
+
+      // Color pickers
+      ['color1', 'color2', 'color3'].forEach(key => {
+        const input = document.getElementById(key);
+        const hex = document.getElementById(key + 'Hex');
+        input.oninput = () => {
+          colors[key] = input.value;
+          hex.textContent = input.value;
+          document.querySelectorAll('.palette-btn').forEach(btn => btn.classList.remove('active'));
+          activePalette = null;
+        };
+      });
+
+      // Code editor toggle
+      const codeEditor = document.getElementById('codeEditor');
+      const toggleBtn = document.getElementById('toggleCodeBtn');
+      const compileBtn = document.getElementById('compileBtn');
+
+      codeEditor.value = shaderPresets[activePreset].code;
+
+      toggleBtn.onclick = () => {
+        const visible = codeEditor.classList.toggle('visible');
+        compileBtn.classList.toggle('visible', visible);
+        toggleBtn.textContent = visible ? 'Hide Editor' : 'Show Editor';
+        toggleBtn.classList.toggle('active', visible);
+      };
+
+      compileBtn.onclick = () => {
+        if (updateShaderProgram(codeEditor.value)) {
+          showToast('Shader Compiled');
+        }
+      };
+    }
+
+    // Initialize
+    window.onload = () => {
+      setupEffectsGrid();
+      setupPaletteGrid();
+      setupControls();
+      initGL();
+      render();
+    };
+  </script>
+</body>
+</html>
