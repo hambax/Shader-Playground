@@ -16,97 +16,109 @@
       font-family: 'Inter', sans-serif;
       background: #F5F5F0;
       min-height: 100vh;
-      padding: 30px 20px;
     }
     
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    .app-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     
-    header {
-      margin-bottom: 30px;
-      border-bottom: 8px solid #1a1a1a;
-      padding-bottom: 20px;
+    @media (min-width: 900px) {
+      .app-layout {
+        flex-direction: row;
+      }
     }
     
-    h1 {
+    .preview-panel {
+      background: #1a1a1a;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+    
+    @media (min-width: 900px) {
+      .preview-panel {
+        width: 55%;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    
+    .preview-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #333;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .preview-header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
       font-weight: 900;
-      line-height: 0.95;
       text-transform: uppercase;
-      letter-spacing: -2px;
-      color: #1a1a1a;
+      letter-spacing: -1px;
+      color: #F5F5F0;
     }
     
-    h1 span {
+    .preview-header h1 span {
       color: #E63946;
     }
     
-    .subtitle {
-      font-size: 0.75rem;
+    .preview-subtitle {
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      margin-top: 12px;
+      letter-spacing: 2px;
       color: #666;
+      margin-top: 5px;
     }
     
-    .section-header {
+    .header-controls {
       display: flex;
-      align-items: baseline;
-      gap: 15px;
-      margin-bottom: 20px;
-      border-bottom: 4px solid #1a1a1a;
-      padding-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
     
-    .section-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-    
-    .section-header span {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 900;
-      color: #E63946;
-    }
-    
-    .canvas-container {
-      background: #1a1a1a;
-      padding: 15px;
+    .canvas-wrapper {
       position: relative;
-      margin-bottom: 25px;
+      flex: 1;
+      min-height: 250px;
+    }
+    
+    @media (min-width: 900px) {
+      .canvas-wrapper {
+        min-height: 0;
+      }
     }
     
     #shaderCanvas {
       width: 100%;
-      height: 350px;
+      height: 100%;
       display: block;
-    }
-    
-    .playback-controls {
-      position: absolute;
-      bottom: 25px;
-      right: 25px;
-      display: flex;
-      gap: 8px;
+      background: #000;
     }
     
     .btn {
       font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       border: none;
-      padding: 10px 16px;
+      padding: 10px 12px;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
     
     .btn-primary {
@@ -114,9 +126,17 @@
       color: #F5F5F0;
     }
     
+    .btn-primary:hover {
+      background: #ff4757;
+    }
+    
     .btn-secondary {
       background: #F5F5F0;
       color: #1a1a1a;
+    }
+    
+    .btn-secondary:hover {
+      background: #fff;
     }
     
     .btn-dark {
@@ -139,11 +159,155 @@
       color: #F5F5F0;
     }
     
-    .two-column {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
+    .btn-recording {
+      background: #E63946;
+      color: #F5F5F0;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* Download Dropdown */
+    .download-dropdown {
+      position: relative;
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 5px;
+      background: #F5F5F0;
+      border: 4px solid #1a1a1a;
+      min-width: 180px;
+      z-index: 200;
+      display: none;
+    }
+    
+    .dropdown-menu.open {
+      display: block;
+    }
+    
+    .dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 12px 15px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid #ddd;
+      cursor: pointer;
+      color: #1a1a1a;
+      transition: all 0.2s ease;
+    }
+    
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+    
+    .dropdown-item:hover {
+      background: #1a1a1a;
+      color: #F5F5F0;
+    }
+    
+    .dropdown-item-desc {
+      display: block;
+      font-size: 0.5rem;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: #888;
+      margin-top: 3px;
+    }
+    
+    .dropdown-item:hover .dropdown-item-desc {
+      color: #aaa;
+    }
+    
+    /* Recording indicator */
+    .recording-indicator {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(230, 57, 70, 0.95);
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 50;
+      display: none;
+    }
+    
+    .recording-indicator.visible {
+      display: flex;
+    }
+    
+    .recording-dot {
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    .controls-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px 20px;
+    }
+    
+    @media (min-width: 900px) {
+      .controls-panel {
+        width: 45%;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 30px;
+      }
+    }
+    
+    .section {
       margin-bottom: 25px;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 15px;
+      border-bottom: 4px solid #1a1a1a;
+      padding-bottom: 10px;
+    }
+    
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    
+    .section-header span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: #E63946;
     }
     
     .effects-grid {
@@ -154,14 +318,14 @@
     
     .effect-btn {
       font-family: 'Inter', sans-serif;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       background: #1a1a1a;
       color: #F5F5F0;
       border: none;
-      padding: 14px 10px;
+      padding: 12px 8px;
       cursor: pointer;
       text-align: left;
       transition: all 0.2s ease;
@@ -171,11 +335,15 @@
       background: #E63946;
     }
     
+    .effect-btn:hover:not(.active) {
+      background: #333;
+    }
+    
     .palette-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
     
     .palette-btn {
@@ -192,7 +360,7 @@
     
     .palette-colors {
       display: flex;
-      height: 32px;
+      height: 28px;
     }
     
     .palette-colors div {
@@ -201,11 +369,11 @@
     
     .palette-label {
       font-family: 'Inter', sans-serif;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 5px 3px;
+      padding: 4px 2px;
       background: #1a1a1a;
       color: #F5F5F0;
       text-align: center;
@@ -213,21 +381,21 @@
     
     .custom-colors {
       background: #1a1a1a;
-      padding: 15px;
+      padding: 12px;
     }
     
     .custom-colors-label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: #F5F5F0;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     
     .color-pickers {
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
     
     .color-picker-wrapper {
@@ -237,7 +405,7 @@
     
     .color-picker-wrapper input {
       width: 100%;
-      height: 45px;
+      height: 40px;
       border: none;
       cursor: pointer;
       padding: 0;
@@ -245,50 +413,54 @@
     
     .color-hex {
       font-family: monospace;
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       color: #666;
-      margin-top: 6px;
+      margin-top: 5px;
       text-transform: uppercase;
     }
     
     .params-section {
       background: #FFD166;
-      padding: 25px;
+      padding: 15px;
       margin-bottom: 25px;
+    }
+    
+    .params-section .section-header {
+      border-bottom-color: #1a1a1a;
     }
     
     .params-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
     }
     
     .param-control {
-      margin-bottom: 5px;
+      margin-bottom: 0;
     }
     
     .param-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .param-label {
       font-family: 'Playfair Display', serif;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
     }
     
     .param-value {
       font-family: 'Inter', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: 900;
     }
     
     input[type="range"] {
       width: 100%;
-      height: 8px;
+      height: 6px;
       background: #1a1a1a;
       appearance: none;
       -webkit-appearance: none;
@@ -297,16 +469,16 @@
     
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       background: #E63946;
       cursor: pointer;
       border: none;
     }
     
     input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       background: #E63946;
       cursor: pointer;
       border: none;
@@ -314,7 +486,7 @@
     
     .fx-section {
       background: #1a1a1a;
-      padding: 25px;
+      padding: 15px;
       margin-bottom: 25px;
     }
     
@@ -332,18 +504,18 @@
     
     .fx-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
     }
     
     .fx-control .param-header {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     .fx-control .param-label {
       color: #F5F5F0;
       font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -351,6 +523,7 @@
     
     .fx-control .param-value {
       color: #FFD166;
+      font-size: 0.9rem;
     }
     
     .fx-control input[type="range"] {
@@ -358,9 +531,9 @@
     }
     
     .fx-description {
-      font-size: 0.6rem;
-      color: #888;
-      margin-top: 6px;
+      font-size: 0.55rem;
+      color: #666;
+      margin-top: 5px;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
@@ -373,42 +546,42 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border-bottom: 4px solid #1a1a1a;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
     }
     
     .code-header-left {
       display: flex;
       align-items: baseline;
-      gap: 15px;
+      gap: 12px;
     }
     
     .code-header h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 900;
       text-transform: uppercase;
     }
     
     .code-header span {
       font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 900;
       color: #E63946;
     }
     
     #codeEditor {
       width: 100%;
-      height: 250px;
+      height: 200px;
       font-family: monospace;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       background: #1a1a1a;
       color: #F5F5F0;
       border: none;
-      padding: 15px;
+      padding: 12px;
       resize: vertical;
-      line-height: 1.5;
+      line-height: 1.4;
       display: none;
     }
     
@@ -423,9 +596,9 @@
     .error-display {
       background: #E63946;
       color: #F5F5F0;
-      padding: 12px 15px;
+      padding: 10px 12px;
       font-family: monospace;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       margin-top: 8px;
       display: none;
     }
@@ -435,7 +608,7 @@
     }
     
     .compile-btn {
-      margin-top: 12px;
+      margin-top: 10px;
       display: none;
     }
     
@@ -446,23 +619,23 @@
     .uniforms-section {
       background: #1a1a1a;
       color: #F5F5F0;
-      padding: 20px;
+      padding: 15px;
     }
     
     .uniforms-section h3 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 900;
       text-transform: uppercase;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
     
     .uniforms-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
       font-family: monospace;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
     }
     
     .uniforms-grid span {
@@ -479,12 +652,13 @@
     
     .toast {
       position: fixed;
-      bottom: 30px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: #1a1a1a;
       color: #F5F5F0;
-      padding: 15px 30px;
+      padding: 12px 24px;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -495,44 +669,84 @@
     .toast.visible {
       transform: translateX(-50%) translateY(0);
     }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .controls-panel::-webkit-scrollbar-track {
+      background: #ddd;
+    }
+    
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: #1a1a1a;
+    }
+    
+    .controls-panel::-webkit-scrollbar-thumb:hover {
+      background: #E63946;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Shader<span>Playground</span></h1>
-      <p class="subtitle">Create • Experiment • Visualize</p>
-    </header>
-
-    <!-- Preview -->
-    <section>
-      <div class="section-header">
-        <h2>Preview</h2>
-        <span>01</span>
-      </div>
-      <div class="canvas-container">
-        <canvas id="shaderCanvas"></canvas>
-        <div class="playback-controls">
+  <div class="app-layout">
+    <div class="preview-panel">
+      <div class="preview-header">
+        <div>
+          <h1>Shader<span>Playground</span></h1>
+          <p class="preview-subtitle">Create • Experiment • Visualize</p>
+        </div>
+        <div class="header-controls">
           <button id="playPauseBtn" class="btn btn-primary">Pause</button>
           <button id="resetBtn" class="btn btn-secondary">Reset</button>
+          <div class="download-dropdown">
+            <button id="downloadBtn" class="btn btn-secondary">Export ▼</button>
+            <div id="downloadMenu" class="dropdown-menu">
+              <button class="dropdown-item" id="downloadPNG">
+                Screenshot
+                <span class="dropdown-item-desc">Save current frame as PNG</span>
+              </button>
+              <button class="dropdown-item" id="downloadGIF">
+                Record GIF
+                <span class="dropdown-item-desc">Capture 4 second animation</span>
+              </button>
+              <button class="dropdown-item" id="downloadVideo">
+                Record Video
+                <span class="dropdown-item-desc">Capture as WebM video</span>
+              </button>
+              <button class="dropdown-item" id="downloadShader">
+                Shader Code
+                <span class="dropdown-item-desc">Export GLSL source</span>
+              </button>
+              <button class="dropdown-item" id="downloadSettings">
+                Settings
+                <span class="dropdown-item-desc">Export parameters as JSON</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+      <div class="canvas-wrapper">
+        <canvas id="shaderCanvas"></canvas>
+        <div id="recordingIndicator" class="recording-indicator">
+          <div class="recording-dot"></div>
+          <span id="recordingText">Recording...</span>
+        </div>
+      </div>
+    </div>
 
-    <!-- Effects & Palette -->
-    <div class="two-column">
-      <section>
+    <div class="controls-panel">
+      <section class="section">
         <div class="section-header">
           <h2>Effects</h2>
-          <span>02</span>
+          <span>01</span>
         </div>
         <div id="effectsGrid" class="effects-grid"></div>
       </section>
 
-      <section>
+      <section class="section">
         <div class="section-header">
           <h2>Palette</h2>
-          <span>03</span>
+          <span>02</span>
         </div>
         <div id="paletteGrid" class="palette-grid"></div>
         <div class="custom-colors">
@@ -553,135 +767,132 @@
           </div>
         </div>
       </section>
+
+      <section class="params-section">
+        <div class="section-header">
+          <h2>Parameters</h2>
+          <span>03</span>
+        </div>
+        <div class="params-grid">
+          <div class="param-control">
+            <div class="param-header">
+              <label class="param-label">Intensity</label>
+              <span class="param-value" id="intensityValue">0.50</span>
+            </div>
+            <input type="range" id="intensity" min="0.1" max="1" step="0.01" value="0.5">
+          </div>
+          <div class="param-control">
+            <div class="param-header">
+              <label class="param-label">Speed</label>
+              <span class="param-value" id="speedValue">0.50</span>
+            </div>
+            <input type="range" id="speed" min="0.1" max="2" step="0.01" value="0.5">
+          </div>
+          <div class="param-control">
+            <div class="param-header">
+              <label class="param-label">Scale</label>
+              <span class="param-value" id="scaleValue">3.0</span>
+            </div>
+            <input type="range" id="scale" min="1" max="10" step="0.1" value="3">
+          </div>
+        </div>
+      </section>
+
+      <section class="fx-section">
+        <div class="section-header">
+          <h2>Post Effects</h2>
+          <span>04</span>
+        </div>
+        <div class="fx-grid">
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Halftone</label>
+              <span class="param-value" id="halftoneValue">0.00</span>
+            </div>
+            <input type="range" id="halftone" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">Retro dot pattern</div>
+          </div>
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Chromatic</label>
+              <span class="param-value" id="chromaticValue">0.00</span>
+            </div>
+            <input type="range" id="chromatic" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">RGB separation</div>
+          </div>
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Vortex</label>
+              <span class="param-value" id="vortexValue">0.00</span>
+            </div>
+            <input type="range" id="vortex" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">Swirl distortion</div>
+          </div>
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Pixelate</label>
+              <span class="param-value" id="pixelateValue">0.00</span>
+            </div>
+            <input type="range" id="pixelate" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">Retro mosaic</div>
+          </div>
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Glitch</label>
+              <span class="param-value" id="glitchValue">0.00</span>
+            </div>
+            <input type="range" id="glitch" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">Digital noise</div>
+          </div>
+          <div class="fx-control">
+            <div class="param-header">
+              <label class="param-label">Scanlines</label>
+              <span class="param-value" id="scanlinesValue">0.00</span>
+            </div>
+            <input type="range" id="scanlines" min="0" max="1" step="0.01" value="0">
+            <div class="fx-description">CRT monitor</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="code-section">
+        <div class="code-header">
+          <div class="code-header-left">
+            <h2>GLSL Code</h2>
+            <span>05</span>
+          </div>
+          <button id="toggleCodeBtn" class="btn btn-outline">Show Editor</button>
+        </div>
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+        <div id="errorDisplay" class="error-display"></div>
+        <button id="compileBtn" class="btn btn-dark compile-btn">Compile Shader</button>
+      </section>
+
+      <section class="uniforms-section">
+        <h3>Available Uniforms</h3>
+        <div class="uniforms-grid">
+          <div><span>u_time</span> — secs</div>
+          <div><span>u_resolution</span> — size</div>
+          <div><span>u_intensity</span> — str</div>
+          <div><span>u_speed</span> — tempo</div>
+          <div><span>u_scale</span> — zoom</div>
+          <div><span class="color-uniform">u_color1</span> — rgb</div>
+          <div><span class="color-uniform">u_color2</span> — rgb</div>
+          <div><span class="color-uniform">u_color3</span> — rgb</div>
+          <div><span class="fx-uniform">u_halftone</span></div>
+          <div><span class="fx-uniform">u_chromatic</span></div>
+          <div><span class="fx-uniform">u_vortex</span></div>
+          <div><span class="fx-uniform">u_pixelate</span></div>
+          <div><span class="fx-uniform">u_glitch</span></div>
+          <div><span class="fx-uniform">u_scanlines</span></div>
+        </div>
+      </section>
     </div>
-
-    <!-- Parameters -->
-    <section class="params-section">
-      <div class="section-header">
-        <h2>Parameters</h2>
-        <span>04</span>
-      </div>
-      <div class="params-grid">
-        <div class="param-control">
-          <div class="param-header">
-            <label class="param-label">Intensity</label>
-            <span class="param-value" id="intensityValue">0.50</span>
-          </div>
-          <input type="range" id="intensity" min="0.1" max="1" step="0.01" value="0.5">
-        </div>
-        <div class="param-control">
-          <div class="param-header">
-            <label class="param-label">Speed</label>
-            <span class="param-value" id="speedValue">0.50</span>
-          </div>
-          <input type="range" id="speed" min="0.1" max="2" step="0.01" value="0.5">
-        </div>
-        <div class="param-control">
-          <div class="param-header">
-            <label class="param-label">Scale</label>
-            <span class="param-value" id="scaleValue">3.0</span>
-          </div>
-          <input type="range" id="scale" min="1" max="10" step="0.1" value="3">
-        </div>
-      </div>
-    </section>
-
-    <!-- FX Section -->
-    <section class="fx-section">
-      <div class="section-header">
-        <h2>Post Effects</h2>
-        <span>05</span>
-      </div>
-      <div class="fx-grid">
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Halftone</label>
-            <span class="param-value" id="halftoneValue">0.00</span>
-          </div>
-          <input type="range" id="halftone" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">Retro dot pattern overlay</div>
-        </div>
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Chromatic</label>
-            <span class="param-value" id="chromaticValue">0.00</span>
-          </div>
-          <input type="range" id="chromatic" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">RGB color separation</div>
-        </div>
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Vortex</label>
-            <span class="param-value" id="vortexValue">0.00</span>
-          </div>
-          <input type="range" id="vortex" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">Swirling distortion</div>
-        </div>
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Pixelate</label>
-            <span class="param-value" id="pixelateValue">0.00</span>
-          </div>
-          <input type="range" id="pixelate" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">Retro pixel mosaic</div>
-        </div>
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Glitch</label>
-            <span class="param-value" id="glitchValue">0.00</span>
-          </div>
-          <input type="range" id="glitch" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">Digital interference</div>
-        </div>
-        <div class="fx-control">
-          <div class="param-header">
-            <label class="param-label">Scanlines</label>
-            <span class="param-value" id="scanlinesValue">0.00</span>
-          </div>
-          <input type="range" id="scanlines" min="0" max="1" step="0.01" value="0">
-          <div class="fx-description">CRT monitor effect</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Code Editor -->
-    <section class="code-section">
-      <div class="code-header">
-        <div class="code-header-left">
-          <h2>GLSL Code</h2>
-          <span>06</span>
-        </div>
-        <button id="toggleCodeBtn" class="btn btn-outline">Show Editor</button>
-      </div>
-      <textarea id="codeEditor" spellcheck="false"></textarea>
-      <div id="errorDisplay" class="error-display"></div>
-      <button id="compileBtn" class="btn btn-dark compile-btn">Compile Shader</button>
-    </section>
-
-    <!-- Uniforms Reference -->
-    <section class="uniforms-section">
-      <h3>Available Uniforms</h3>
-      <div class="uniforms-grid">
-        <div><span>u_time</span> — seconds</div>
-        <div><span>u_resolution</span> — size</div>
-        <div><span>u_intensity</span> — strength</div>
-        <div><span>u_speed</span> — tempo</div>
-        <div><span>u_scale</span> — pattern</div>
-        <div><span class="color-uniform">u_color1</span> — rgb</div>
-        <div><span class="color-uniform">u_color2</span> — rgb</div>
-        <div><span class="color-uniform">u_color3</span> — rgb</div>
-        <div><span class="fx-uniform">u_halftone</span> — dots</div>
-        <div><span class="fx-uniform">u_chromatic</span> — aberr</div>
-        <div><span class="fx-uniform">u_vortex</span> — swirl</div>
-        <div><span class="fx-uniform">u_pixelate</span> — mosaic</div>
-        <div><span class="fx-uniform">u_glitch</span> — noise</div>
-        <div><span class="fx-uniform">u_scanlines</span> — crt</div>
-      </div>
-    </section>
   </div>
 
   <div id="toast" class="toast"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
   <script>
     // Color Palettes
     const colorPalettes = {
@@ -695,7 +906,6 @@
       candy: { name: "Candy", colors: ['#FF99C8', '#FCF6BD', '#A9DEF9'] }
     };
 
-    // Shader template
     const createShader = (baseLogic) => `precision highp float;
 uniform float u_time;
 uniform vec2 u_resolution;
@@ -731,13 +941,11 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   vec2 originalUV = uv;
   
-  // Pixelation
   if (u_pixelate > 0.01) {
     float pixels = mix(200.0, 20.0, u_pixelate);
     uv = floor(uv * pixels) / pixels;
   }
   
-  // Vortex distortion
   if (u_vortex > 0.01) {
     vec2 center = vec2(0.5 + sin(u_time * u_speed * 0.5) * 0.2, 0.5 + cos(u_time * u_speed * 0.7) * 0.2);
     vec2 delta = uv - center;
@@ -747,7 +955,6 @@ void main() {
     uv = center + vec2(cos(angle), sin(angle)) * dist;
   }
   
-  // Glitch
   if (u_glitch > 0.01) {
     float glitchLine = step(0.99 - u_glitch * 0.1, random(vec2(floor(u_time * 20.0), floor(uv.y * 20.0))));
     uv.x += glitchLine * (random(vec2(u_time)) - 0.5) * u_glitch * 0.3;
@@ -755,18 +962,15 @@ void main() {
   
   vec3 col = getColor(uv);
   
-  // Chromatic aberration
   if (u_chromatic > 0.01) {
     vec2 center = vec2(0.5);
     vec2 dir = normalize(uv - center);
     float dist = length(uv - center);
     float aberration = u_chromatic * 0.03 * dist;
-    
     col.r = getColor(uv + dir * aberration).r;
     col.b = getColor(uv - dir * aberration).b;
   }
   
-  // Halftone
   if (u_halftone > 0.01) {
     float dotSize = mix(8.0, 3.0, u_halftone);
     vec2 cellPos = floor(gl_FragCoord.xy / dotSize);
@@ -778,7 +982,6 @@ void main() {
     col = mix(col, col * dot, u_halftone);
   }
   
-  // Scanlines
   if (u_scanlines > 0.01) {
     float scanline = sin(gl_FragCoord.y * 2.0) * 0.5 + 0.5;
     col *= 1.0 - u_scanlines * 0.3 * scanline;
@@ -788,7 +991,6 @@ void main() {
   gl_FragColor = vec4(col, 1.0);
 }`;
 
-    // Shader presets
     const shaderPresets = {
       plasma: {
         name: "Plasma Wave",
@@ -946,19 +1148,22 @@ vec3 getColor(vec2 uv) {
       }
     };
 
-    // Vertex shader
     const vertexShaderSource = `
       attribute vec2 a_position;
       void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
     `;
 
-    // State
     let gl, program, canvas;
     let isPlaying = true;
     let startTime = Date.now();
     let activePreset = 'plasma';
     let activePalette = 'neon';
     let animationId;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecordingVideo = false;
+    let isRecordingGif = false;
+    let gifFrames = [];
 
     const params = {
       intensity: 0.5,
@@ -978,7 +1183,6 @@ vec3 getColor(vec2 uv) {
       color3: '#3A86FF'
     };
 
-    // Utilities
     function hexToRgb(hex) {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
@@ -1022,7 +1226,7 @@ vec3 getColor(vec2 uv) {
 
     function initGL() {
       canvas = document.getElementById('shaderCanvas');
-      gl = canvas.getContext('webgl');
+      gl = canvas.getContext('webgl', { preserveDrawingBuffer: true });
       if (!gl) {
         alert('WebGL not supported');
         return;
@@ -1052,8 +1256,9 @@ vec3 getColor(vec2 uv) {
     function render() {
       if (!gl || !program) return;
 
-      canvas.width = canvas.clientWidth * window.devicePixelRatio;
-      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+      const wrapper = document.querySelector('.canvas-wrapper');
+      canvas.width = wrapper.clientWidth * window.devicePixelRatio;
+      canvas.height = wrapper.clientHeight * window.devicePixelRatio;
       gl.viewport(0, 0, canvas.width, canvas.height);
 
       gl.useProgram(program);
@@ -1090,7 +1295,153 @@ vec3 getColor(vec2 uv) {
       }
     }
 
-    // UI Setup
+    // Download functions
+    function downloadFile(content, filename, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadPNG() {
+      render();
+      const dataURL = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = `shader-${activePreset}-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Screenshot saved');
+    }
+
+    function downloadShader() {
+      const code = document.getElementById('codeEditor').value;
+      downloadFile(code, `shader-${activePreset}.glsl`, 'text/plain');
+      showToast('Shader exported');
+    }
+
+    function downloadSettings() {
+      const settings = {
+        preset: activePreset,
+        palette: activePalette,
+        colors: colors,
+        params: params,
+        timestamp: new Date().toISOString()
+      };
+      downloadFile(JSON.stringify(settings, null, 2), `shader-settings-${Date.now()}.json`, 'application/json');
+      showToast('Settings exported');
+    }
+
+    function startVideoRecording() {
+      if (isRecordingVideo) {
+        stopVideoRecording();
+        return;
+      }
+
+      recordedChunks = [];
+      const stream = canvas.captureStream(30);
+      mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `shader-${activePreset}-${Date.now()}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Video saved');
+      };
+
+      mediaRecorder.start();
+      isRecordingVideo = true;
+      document.getElementById('recordingIndicator').classList.add('visible');
+      document.getElementById('recordingText').textContent = 'Recording Video...';
+      document.getElementById('downloadVideo').textContent = 'Stop Recording';
+      showToast('Recording started');
+    }
+
+    function stopVideoRecording() {
+      if (mediaRecorder && isRecordingVideo) {
+        mediaRecorder.stop();
+        isRecordingVideo = false;
+        document.getElementById('recordingIndicator').classList.remove('visible');
+        document.getElementById('downloadVideo').innerHTML = 'Record Video<span class="dropdown-item-desc">Capture as WebM video</span>';
+      }
+    }
+
+    function startGifRecording() {
+      if (isRecordingGif) return;
+      
+      if (typeof GIF === 'undefined') {
+        showToast('GIF library loading...');
+        return;
+      }
+
+      isRecordingGif = true;
+      document.getElementById('recordingIndicator').classList.add('visible');
+      document.getElementById('recordingText').textContent = 'Recording GIF... 4s';
+      showToast('Recording GIF (4 seconds)');
+
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        width: canvas.width / 2,
+        height: canvas.height / 2,
+        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+      });
+
+      let frameCount = 0;
+      const totalFrames = 60;
+      const frameInterval = setInterval(() => {
+        if (frameCount >= totalFrames) {
+          clearInterval(frameInterval);
+          document.getElementById('recordingText').textContent = 'Processing GIF...';
+          gif.render();
+          return;
+        }
+
+        // Create a smaller canvas for GIF
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width / 2;
+        tempCanvas.height = canvas.height / 2;
+        const ctx = tempCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+        gif.addFrame(tempCanvas, { delay: 66, copy: true });
+        
+        frameCount++;
+        const remaining = Math.ceil((totalFrames - frameCount) / 15);
+        document.getElementById('recordingText').textContent = `Recording GIF... ${remaining}s`;
+      }, 66);
+
+      gif.on('finished', (blob) => {
+        isRecordingGif = false;
+        document.getElementById('recordingIndicator').classList.remove('visible');
+        
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `shader-${activePreset}-${Date.now()}.gif`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('GIF saved');
+      });
+    }
+
     function setupEffectsGrid() {
       const grid = document.getElementById('effectsGrid');
       Object.entries(shaderPresets).forEach(([key, preset]) => {
@@ -1126,7 +1477,7 @@ vec3 getColor(vec2 uv) {
       const code = shaderPresets[key].code;
       document.getElementById('codeEditor').value = code;
       if (updateShaderProgram(code)) {
-        showToast('Effect: ' + shaderPresets[key].name);
+        showToast(shaderPresets[key].name);
       }
     }
 
@@ -1150,7 +1501,6 @@ vec3 getColor(vec2 uv) {
     }
 
     function setupControls() {
-      // Play/Pause
       document.getElementById('playPauseBtn').onclick = () => {
         isPlaying = !isPlaying;
         document.getElementById('playPauseBtn').textContent = isPlaying ? 'Pause' : 'Play';
@@ -1159,12 +1509,29 @@ vec3 getColor(vec2 uv) {
         if (isPlaying) render();
       };
 
-      // Reset
       document.getElementById('resetBtn').onclick = () => {
         startTime = Date.now();
       };
 
-      // Parameters
+      // Download dropdown
+      const downloadBtn = document.getElementById('downloadBtn');
+      const downloadMenu = document.getElementById('downloadMenu');
+      
+      downloadBtn.onclick = (e) => {
+        e.stopPropagation();
+        downloadMenu.classList.toggle('open');
+      };
+
+      document.addEventListener('click', () => {
+        downloadMenu.classList.remove('open');
+      });
+
+      document.getElementById('downloadPNG').onclick = downloadPNG;
+      document.getElementById('downloadGIF').onclick = startGifRecording;
+      document.getElementById('downloadVideo').onclick = startVideoRecording;
+      document.getElementById('downloadShader').onclick = downloadShader;
+      document.getElementById('downloadSettings').onclick = downloadSettings;
+
       ['intensity', 'speed', 'scale'].forEach(param => {
         const input = document.getElementById(param);
         const display = document.getElementById(param + 'Value');
@@ -1174,7 +1541,6 @@ vec3 getColor(vec2 uv) {
         };
       });
 
-      // FX Parameters
       ['halftone', 'chromatic', 'vortex', 'pixelate', 'glitch', 'scanlines'].forEach(param => {
         const input = document.getElementById(param);
         const display = document.getElementById(param + 'Value');
@@ -1184,7 +1550,6 @@ vec3 getColor(vec2 uv) {
         };
       });
 
-      // Color pickers
       ['color1', 'color2', 'color3'].forEach(key => {
         const input = document.getElementById(key);
         const hex = document.getElementById(key + 'Hex');
@@ -1196,7 +1561,6 @@ vec3 getColor(vec2 uv) {
         };
       });
 
-      // Code editor toggle
       const codeEditor = document.getElementById('codeEditor');
       const toggleBtn = document.getElementById('toggleCodeBtn');
       const compileBtn = document.getElementById('compileBtn');
@@ -1217,7 +1581,10 @@ vec3 getColor(vec2 uv) {
       };
     }
 
-    // Initialize
+    window.addEventListener('resize', () => {
+      if (!isPlaying) render();
+    });
+
     window.onload = () => {
       setupEffectsGrid();
       setupPaletteGrid();
